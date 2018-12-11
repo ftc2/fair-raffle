@@ -1,0 +1,11 @@
+# sample list of raffle entrants
+bobby
+jilly
+joe
+jeff
+sarah
+elaine
+joy
+gabe
+bill
+johnny
