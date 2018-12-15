@@ -12,7 +12,7 @@ class InvalidTimeError(Exception):
   pass
   
 parser = argparse.ArgumentParser(description='Provably Fair Raffle Generator', epilog='Generates a raffle ticket chain for the entrants provided. If an NIST Randomness Beacon (https://beacon.nist.gov/home) pulse is specified, the raffle drawing is conducted. Raffle tickets and (optionally) sorted results are written to CSV files.')
-parser.add_argument('user_path', metavar='ENTRANTS', help='path to text file containing raffle entrants (one name per line, lines beginning with "#" are ignored)')
+parser.add_argument('entrants_path', metavar='ENTRANTS', help='path to text file containing raffle entrants (one name per line, lines beginning with "#" are ignored)')
 grp_pulse = parser.add_mutually_exclusive_group()
 grp_pulse.add_argument('-i', metavar='PULSE', dest='pulse_index', help='index of NIST Randomness Beacon pulse used to select winners')
 grp_pulse.add_argument('-u', metavar='PULSE', dest='pulse_unixtime', type=int, help='Unix timestamp (in ms) of NIST Randomness Beacon pulse used to select winners')
@@ -21,17 +21,17 @@ grp_pulse.add_argument('-l', action='store_const', const=True, dest='pulse_last'
 
 args = parser.parse_args()
 
-headers = ['User', 'Index', 'Hash [sha256(user+i)]', 'Ticket [sha256(ticket(i-1)+hash(i))]', 'Result [sha256(ticket(i)+pulse)]']
+headers = ['Entrant', 'Index', 'Hash [sha256(entrant+i)]', 'Ticket [sha256(ticket(i-1)+hash(i))]', 'Result [sha256(ticket(i)+pulse)]']
 
-raffle_name = os.path.splitext(args.user_path)[0]
+raffle_name = os.path.splitext(args.entrants_path)[0]
 
 # strip trailing/leading whitespace, ignore empty lines and comments
-users = [line.strip() for line in open(args.user_path) if line.strip() and not line.startswith('#')]
-print 'Parsed {} raffle entrants.'.format(len(users))
+entrants = [line.strip() for line in open(args.entrants_path) if line.strip() and not line.startswith('#')]
+print 'Parsed {} raffle entrants.'.format(len(entrants))
 
-index = map(str, range(1, len(users) + 1))
+index = map(str, range(1, len(entrants) + 1))
 
-hashes = [sha256(''.join(x)).hexdigest() for x in zip(users, index)]
+hashes = [sha256(''.join(x)).hexdigest() for x in zip(entrants, index)]
 
 tickets = [hashes[0]]
 for i,h in enumerate(hashes):
@@ -41,7 +41,7 @@ ticket_path = '{}-ticketchain.csv'.format(raffle_name)
 with open(ticket_path, 'wb') as csvfile:
   cwriter = csv.writer(csvfile)
   cwriter.writerow(headers[0:-1])
-  for row in zip(users, index, hashes, tickets):
+  for row in zip(entrants, index, hashes, tickets):
     cwriter.writerow(row)
 
 nist_url_prefix = 'https://beacon.nist.gov/beacon/2.0/'
@@ -82,7 +82,7 @@ if nist_url:
 
   results = [sha256(x).hexdigest() for x in (t + pulse['outputValue'] for t in tickets)]
 
-  output = sorted(zip(users, index, hashes, tickets, results), key = lambda x: x[-1])
+  output = sorted(zip(entrants, index, hashes, tickets, results), key = lambda x: x[-1])
 
   result_path = '{}-results-{}.csv'.format(raffle_name, pulse['pulseIndex'])
   with open(result_path, 'wb') as csvfile:
