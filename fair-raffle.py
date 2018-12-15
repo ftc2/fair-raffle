@@ -14,9 +14,9 @@ class InvalidTimeError(Exception):
 parser = argparse.ArgumentParser(description='Provably Fair Raffle Generator', epilog='Generates a raffle ticket chain for the entrants provided. If an NIST Randomness Beacon (https://beacon.nist.gov/home) pulse is specified, the raffle drawing is conducted. Raffle tickets and (optionally) sorted results are written to CSV files.')
 parser.add_argument('entrants_path', metavar='ENTRANTS', help='path to text file containing raffle entrants (one name per line, lines beginning with "#" are ignored)')
 grp_pulse = parser.add_mutually_exclusive_group()
-grp_pulse.add_argument('-i', metavar='PULSE', dest='pulse_index', help='index of NIST Randomness Beacon pulse used to select winners')
-grp_pulse.add_argument('-u', metavar='PULSE', dest='pulse_unixtime', type=int, help='Unix timestamp (in ms) of NIST Randomness Beacon pulse used to select winners')
-grp_pulse.add_argument('-t', metavar='PULSE', dest='pulse_time', help='timestamp of NIST Randomness Beacon pulse used to select winners. format: "year-month-day hour-minute timezone", e.g. "2018-11-28 16:03 -0600" or "2018-11-28 22:03 +0000"')
+grp_pulse.add_argument('-i', metavar='INDEX', dest='pulse_index', help='index of NIST Randomness Beacon pulse used to select winners')
+grp_pulse.add_argument('-u', metavar='UNIX_TS', dest='pulse_unixtime', type=int, help='Unix timestamp (in ms) of NIST Randomness Beacon pulse used to select winners')
+grp_pulse.add_argument('-t', metavar='TS', dest='pulse_time', help='timestamp of NIST Randomness Beacon pulse used to select winners. format: "year-month-day hour-minute timezone", e.g. "2018-11-28 16:03 -0600" or "2018-11-28 22:03 +0000"')
 grp_pulse.add_argument('-l', action='store_const', const=True, dest='pulse_last', help='use latest available NIST Randomness Beacon pulse to select winners')
 
 args = parser.parse_args()

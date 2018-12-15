@@ -36,7 +36,7 @@ Works with python 2.7.15
 
 
 ```
-usage: fair-raffle.py [-h] [-i PULSE | -u PULSE | -t PULSE | -l] ENTRANTS
+usage: fair-raffle.py [-h] [-i INDEX | -u UNIX_TS | -t TS | -l] ENTRANTS
 
 Provably Fair Raffle Generator
 
@@ -46,10 +46,10 @@ positional arguments:
 
 optional arguments:
   -h, --help  show this help message and exit
-  -i PULSE    index of NIST Randomness Beacon pulse used to select winners
-  -u PULSE    Unix timestamp (in ms) of NIST Randomness Beacon pulse used to
+  -i INDEX    index of NIST Randomness Beacon pulse used to select winners
+  -u UNIX_TS  Unix timestamp (in ms) of NIST Randomness Beacon pulse used to
               select winners
-  -t PULSE    timestamp of NIST Randomness Beacon pulse used to select
+  -t TS       timestamp of NIST Randomness Beacon pulse used to select
               winners. format: "year-month-day hour-minute timezone", e.g.
               "2018-11-28 16:03 -0600" or "2018-11-28 22:03 +0000"
   -l          use latest available NIST Randomness Beacon pulse to select
