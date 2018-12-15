@@ -6,17 +6,17 @@ A simple algorithm and python script to conduct provably fair raffles. Tickets a
 
 ## Algorithm
 
-Consider a list of *N* entrants (i.e. potential raffle winners), and define `+` as the string concatenation operator.
+Consider a list of *N* entrants (i.e. potential raffle winners) and define `+` as the string concatenation operator.
 
 For each entrant *E<sub>i</sub>*, a hash *H<sub>i</sub>* is first computed:
 
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex=H_{i}=\big(\texttt{SHA256}(E_{i}&plus;i)\big)_{i=1}^{N}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?H_{i}=\big(\texttt{SHA256}(E_{i}&plus;i)\big)_{i=1}^{N}" title="H_{i}=\big(\texttt{SHA256}(E_{i}+i)\big)_{i=1}^{N}" /></a>
 
-Next, each raffle ticket *T<sub>i</sub>* in the chain is computed, letting the raffle name *name* serve as a seed:
+Next, each raffle ticket *T<sub>i</sub>* in the chain is computed letting the raffle name *name* serve as a seed:
 
 &nbsp;&nbsp;&nbsp;&nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex=T_{i}=\qquad&space;\begin{cases}&space;\texttt{SHA256}(\mathrm{name}&plus;H_{i}),&space;&&space;i=&space;1\\&space;\texttt{SHA256}(T_{i-1}&plus;H_{i}),&space;&&space;2\leq&space;i\leq&space;N&space;\end{cases}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?T_{i}=\qquad&space;\begin{cases}&space;\texttt{SHA256}(\mathrm{name}&plus;H_{i}),&space;&&space;i=&space;1\\&space;\texttt{SHA256}(T_{i-1}&plus;H_{i}),&space;&&space;2\leq&space;i\leq&space;N&space;\end{cases}" title="T_{i}=\qquad \begin{cases} \texttt{SHA256}(\mathrm{name}+H_{i}), & i= 1\\ \texttt{SHA256}(T_{i-1}+H_{i}), & 2\leq i\leq N \end{cases}" /></a>
 
-Note that each ticket depends on the previous tickets in the chain, making it impossible to cheat by retroactively injecting tickets. 
+Note that each ticket depends on the previous tickets in the chain making it impossible to cheat by retroactively injecting tickets. 
 
 Finally, the raffle drawing is conducted by calculating a result *R<sub>i</sub>* for each ticket:
 
