@@ -10,17 +10,17 @@ Consider a list of *N* entrants (i.e. potential raffle winners), and define `+` 
 
 For each entrant *E<sub>i</sub>*, a hash *H<sub>i</sub>* is first computed:
 
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex=H_{i}=\big(\textup{SHA256}(E_{i}&plus;i)\big)_{i=1}^{N}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?H_{i}=\big(\textup{SHA256}(E_{i}&plus;i)\big)_{i=1}^{N}" title="H_{i}=\big(\textup{SHA256}(E_{i}+i)\big)_{i=1}^{N}" /></a>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex=H_{i}=\big(\texttt{SHA256}(E_{i}&plus;i)\big)_{i=1}^{N}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?H_{i}=\big(\texttt{SHA256}(E_{i}&plus;i)\big)_{i=1}^{N}" title="H_{i}=\big(\texttt{SHA256}(E_{i}+i)\big)_{i=1}^{N}" /></a>
 
-Next, each raffle ticket *T<sub>i</sub>* in the chain is computed, letting *H<sub>1</sub>* serve as a seed:
+Next, each raffle ticket *T<sub>i</sub>* in the chain is computed, letting the raffle name *name* serve as a seed:
 
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex=T_{i}=\qquad&space;\begin{cases}&space;H_{i},&space;&&space;i=&space;1\\&space;\textup{SHA256}(T_{i-1}&plus;H_{i}),&space;&&space;2\leq&space;i\leq&space;N&space;\end{cases}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?T_{i}=\qquad&space;\begin{cases}&space;H_{i},&space;&&space;i=&space;1\\&space;\textup{SHA256}(T_{i-1}&plus;H_{i}),&space;&&space;2\leq&space;i\leq&space;N&space;\end{cases}" title="T_{i}=\qquad \begin{cases} H_{i}, & i= 1\\ \textup{SHA256}(T_{i-1}+H_{i}), & 2\leq i\leq N \end{cases}" /></a>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex=T_{i}=\qquad&space;\begin{cases}&space;\texttt{SHA256}(\mathrm{name}&plus;H_{i}),&space;&&space;i=&space;1\\&space;\texttt{SHA256}(T_{i-1}&plus;H_{i}),&space;&&space;2\leq&space;i\leq&space;N&space;\end{cases}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?T_{i}=\qquad&space;\begin{cases}&space;\texttt{SHA256}(\mathrm{name}&plus;H_{i}),&space;&&space;i=&space;1\\&space;\texttt{SHA256}(T_{i-1}&plus;H_{i}),&space;&&space;2\leq&space;i\leq&space;N&space;\end{cases}" title="T_{i}=\qquad \begin{cases} \texttt{SHA256}(\mathrm{name}+H_{i}), & i= 1\\ \texttt{SHA256}(T_{i-1}+H_{i}), & 2\leq i\leq N \end{cases}" /></a>
 
 Note that each ticket depends on the previous tickets in the chain, making it impossible to cheat by retroactively injecting tickets. 
 
 Finally, the raffle drawing is conducted by calculating a result *R<sub>i</sub>* for each ticket:
 
-&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex=R_{i}=\big(\textup{SHA256}(T_{i}&plus;P)\big)_{i=1}^{N}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?R_{i}=\big(\textup{SHA256}(T_{i}&plus;P)\big)_{i=1}^{N}" title="R_{i}=\big(\textup{SHA256}(T_{i}+P)\big)_{i=1}^{N}" /></a>
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="https://www.codecogs.com/eqnedit.php?latex=R_{i}=\big(\texttt{SHA256}(T_{i}&plus;P)\big)_{i=1}^{N}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?R_{i}=\big(\texttt{SHA256}(T_{i}&plus;P)\big)_{i=1}^{N}" title="R_{i}=\big(\texttt{SHA256}(T_{i}+P)\big)_{i=1}^{N}" /></a>
 
 where *P* the NIST Randomness Beacon's [output](https://beacon.nist.gov/home) (512 bits of entropy) at the pre-determined moment of the drawing.
 
@@ -62,6 +62,8 @@ are written to CSV files.
 ```
 
 #### Example
+
+For a raffle named `my_raffle`:
 
 First, publicly announce the date and time (down to the minute) on which the raffle drawing will occur. Let the cutoff in this example be `2018-11-28 22:03 -0600` (i.e. 10:03 PM [CST](https://en.wikipedia.org/wiki/UTC%E2%88%9206:00) on 2018-11-28).
 

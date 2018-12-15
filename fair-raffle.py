@@ -23,7 +23,10 @@ args = parser.parse_args()
 
 headers = ['Entrant', 'Index', 'Hash [sha256(entrant+i)]', 'Ticket [sha256(ticket(i-1)+hash(i))]', 'Result [sha256(ticket(i)+pulse)]']
 
-raffle_name = os.path.splitext(args.entrants_path)[0]
+# /path/to/foo.txt -> /path/to/foo
+raffle_pathbase = os.path.splitext(args.entrants_path)[0]
+# /path/to/foo.txt -> foo
+raffle_name = os.path.splitext(os.path.basename(args.entrants_path))[0]
 
 # strip trailing/leading whitespace, ignore empty lines and comments
 entrants = [line.strip() for line in open(args.entrants_path) if line.strip() and not line.startswith('#')]
@@ -33,11 +36,11 @@ index = map(str, range(1, len(entrants) + 1))
 
 hashes = [sha256(''.join(x)).hexdigest() for x in zip(entrants, index)]
 
-tickets = [hashes[0]]
+tickets = [sha256(raffle_name + hashes[0]).hexdigest()]
 for i,h in enumerate(hashes):
   if i > 0: tickets.append(sha256(tickets[i - 1] + h).hexdigest())
 
-ticket_path = '{}-ticketchain.csv'.format(raffle_name)
+ticket_path = '{}-ticketchain.csv'.format(raffle_pathbase)
 with open(ticket_path, 'wb') as csvfile:
   cwriter = csv.writer(csvfile)
   cwriter.writerow(headers[0:-1])
@@ -84,7 +87,7 @@ if nist_url:
 
   output = sorted(zip(entrants, index, hashes, tickets, results), key = lambda x: x[-1])
 
-  result_path = '{}-results-{}.csv'.format(raffle_name, pulse['pulseIndex'])
+  result_path = '{}-results-{}.csv'.format(raffle_pathbase, pulse['pulseIndex'])
   with open(result_path, 'wb') as csvfile:
     cwriter = csv.writer(csvfile)
     cwriter.writerow(headers)
