@@ -10,7 +10,12 @@ from urllib2 import urlopen
 
 class InvalidTimeError(Exception):
   pass
-  
+
+def plural(msg, count):
+  res = msg.format(count)
+  if count == 1: return res
+  else: return res + 's'
+
 parser = argparse.ArgumentParser(description='Provably Fair Raffle Generator', epilog='Generates a raffle ticket chain for the entrants provided. If an NIST Randomness Beacon (https://beacon.nist.gov/home) pulse is specified, the raffle drawing is conducted. Raffle tickets and (optionally) sorted results are written to CSV files.')
 parser.add_argument('entrants_path', metavar='ENTRANTS', help='path to text file containing raffle entrants (one name per line, lines beginning with "#" are ignored)')
 parser.add_argument('--unique', action='store_true', help='ignore duplicate entrants')
@@ -39,10 +44,13 @@ if args.unique:
   for e in entrants:
     if e not in unique_entrants:
       unique_entrants.append(e)
-  print 'Parsed {} unique raffle entrants ({} duplicates ignored).'.format(len(unique_entrants), len(entrants) - len(unique_entrants))
+  print 'Parsed {} ({} ignored).'.format(
+    plural('{} unique raffle entrant', len(unique_entrants)),
+    plural('{} duplicate', len(entrants) - len(unique_entrants))
+  )
   entrants = unique_entrants
 else:
-  print 'Parsed {} raffle entrants.'.format(len(entrants))
+  print 'Parsed {}.'.format(plural('{} raffle entrant', len(entrants)))
 
 index = map(str, range(1, len(entrants) + 1))
 
