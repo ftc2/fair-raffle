@@ -13,6 +13,7 @@ class InvalidTimeError(Exception):
   
 parser = argparse.ArgumentParser(description='Provably Fair Raffle Generator', epilog='Generates a raffle ticket chain for the entrants provided. If an NIST Randomness Beacon (https://beacon.nist.gov/home) pulse is specified, the raffle drawing is conducted. Raffle tickets and (optionally) sorted results are written to CSV files.')
 parser.add_argument('entrants_path', metavar='ENTRANTS', help='path to text file containing raffle entrants (one name per line, lines beginning with "#" are ignored)')
+parser.add_argument('--unique', action='store_true', help='ignore duplicate entrants')
 grp_pulse = parser.add_mutually_exclusive_group()
 grp_pulse.add_argument('-i', metavar='INDEX', dest='pulse_index', help='index of NIST Randomness Beacon pulse used to select winners')
 grp_pulse.add_argument('-u', metavar='UNIX_TS', dest='pulse_unixtime', type=int, help='Unix timestamp (in ms) of NIST Randomness Beacon pulse used to select winners')
@@ -28,9 +29,20 @@ raffle_pathbase = os.path.splitext(args.entrants_path)[0]
 # /path/to/foo.txt -> foo
 raffle_name = os.path.splitext(os.path.basename(args.entrants_path))[0]
 
+print 'Raffle name: {}'.format(raffle_name)
+
 # strip trailing/leading whitespace, ignore empty lines and comments
 entrants = [line.strip() for line in open(args.entrants_path) if line.strip() and not line.startswith('#')]
-print 'Parsed {} raffle entrants.'.format(len(entrants))
+
+if args.unique:
+  unique_entrants = []
+  for e in entrants:
+    if e not in unique_entrants:
+      unique_entrants.append(e)
+  print 'Parsed {} unique raffle entrants ({} duplicates ignored).'.format(len(unique_entrants), len(entrants) - len(unique_entrants))
+  entrants = unique_entrants
+else:
+  print 'Parsed {} raffle entrants.'.format(len(entrants))
 
 index = map(str, range(1, len(entrants) + 1))
 
