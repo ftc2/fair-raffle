@@ -36,7 +36,8 @@ Works with python 2.7.15
 
 
 ```
-usage: fair-raffle.py [-h] [-i INDEX | -u UNIX_TS | -t TS | -l] ENTRANTS
+usage: fair-raffle.py [-h] [--unique] [-i INDEX | -u UNIX_TS | -t TS | -l]
+                      ENTRANTS
 
 Provably Fair Raffle Generator
 
@@ -46,6 +47,7 @@ positional arguments:
 
 optional arguments:
   -h, --help  show this help message and exit
+  --unique    ignore duplicate entrants
   -i INDEX    index of NIST Randomness Beacon pulse used to select winners
   -u UNIX_TS  Unix timestamp (in ms) of NIST Randomness Beacon pulse used to
               select winners
@@ -80,13 +82,14 @@ As you collect more entrants, update `my_raffle.txt` and re-generate the tickets
 At any time *after* the announced drawing time, find winner(s) like this:
 
 ```
-python fair-raffle.py /path/to/my_raffle.txt -t '2018-11-28 22:03 -0600'
+$ python fair-raffle.py /path/to/my_raffle.txt -t '2018-11-28 22:03 -0600'
 
+Raffle name: my_raffle
 Parsed 10 raffle entrants.
 Fetching https://beacon.nist.gov/beacon/2.0/pulse/time/1543464180000 ...
 NIST Randomness Beacon output for pulse index 180921 (2018-11-29T04:03:00.000Z): https://beacon.nist.gov/beacon/2.0/chain/1/pulse/180921
   00C1D306216BD4B4DC183292E92DEC7842B0C0AF0FB2EF8EE7A057E2240A620EC4971D579A69DABCB134850C1C62B4D0C25EEEED68E83B2BC4FB091BEBE7D176
-Winner: bill (for details, see /path/to/my_raffle-results-180921.csv)
+Winner: joe (for details, see /path/to/my_raffle-results-180921.csv)
 ```
 
 The results of the drawing will be saved to `my_raffle-results-<pulseIndex>.csv`. They're sorted so that winners come first. If you want only one winner, just pick the first in the list.
